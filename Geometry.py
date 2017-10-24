@@ -43,10 +43,19 @@ Point = namedtuple('Point', ['x', 'y'])
 
 class Shape(tuple):
     def __new__(cls, points):
+        cls.polygon = None
+        cls.polyline = None
         return super(Shape, cls).__new__(cls, points)
 
-    def segments(self):
-        return ((v, w) for v, w in zip(self.points, self.points[1:]))
+    def createPolygon(self, g):
+        if self.polygon is None:
+            self.polygon = Polygon(g, self)
+        return self.polygon
+
+    def createPolyline(self, g):
+        if self.polyline is None:
+            self.polyline = Polyline(g, self)
+        return self.polyline
 
 
 class Line(Shape):
@@ -73,5 +82,5 @@ if __name__ == "__main__":
     line = Line(p1, p2)
     circle = Circle(10, 10)
 
-    polygon = Polygon(handle, circle)
-    polyline = Polyline(handle, circle)
+    polygon = circle.createPolygon(handle)
+    polyline = circle.createPolyline(handle)
